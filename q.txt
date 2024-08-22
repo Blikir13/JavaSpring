@@ -1,1 +1,10 @@
-1. Приглашение к вводу
+
+2. GITIGNORE IDEAE .IML !
+3. MAP -> MAPPER !
+4. FINAL
+5. PRINTL -> LOGGER
+6. NAMING длинный
+7. INTERFACE + IMPL !
+8. TRY C ресурсами !
+9. трехслойная архитектура
+10. Конфиг файл !

@@ -16,14 +16,5 @@ public class Validation {
         if (stationDataDto.getPressure() <= 0) {
             throw new IllegalArgumentException("someText");
         }
-
-
     }
-
-//    private void checkWindDirection(String windDirection) {
-//        ArrayList<String> windDirections = new ArrayList<>(Arrays.asList("N", "S", "W", "E", "SW", "SE", "NW", "NE"));
-//        if (!windDirections.contains(windDirection)) {
-//            throw new IllegalArgumentException("some");
-//        }
-//    }
 }

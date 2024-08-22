@@ -1,24 +1,30 @@
 package console;
 
 import dto.StationDataDto;
+import mapper.StationDataMapper;
+import repository.entity.StationDataCsvEntity;
+import repository.entity.StationDataEntity;
+import repository.impl.RepositoryStationCsv;
+import validation.Validation;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Console {
-    private Scanner scanner;
+    private final Scanner scanner;
+    private final RepositoryStationCsv repositoryStationCsv = new RepositoryStationCsv("stationData.csv");
+    private final Validation validation = new Validation();
+    private final StationDataMapper stationDataMapper = new StationDataMapper();
 
-    // Конструктор класса, инициализирует сканер
     public Console() {
         this.scanner = new Scanner(System.in);
     }
 
-    // Метод для получения строки от пользователя
     public String getStringInput(String prompt) {
         System.out.print(prompt);
         return scanner.nextLine();
     }
 
-    // Метод для получения целого числа от пользователя
     public int getIntInput(String prompt) {
         System.out.print(prompt);
         while (!scanner.hasNextInt()) {
@@ -30,7 +36,6 @@ public class Console {
         return result;
     }
 
-    // Метод для получения числа с плавающей запятой от пользователя
     public double getDoubleInput(String prompt) {
         System.out.print(prompt);
         while (!scanner.hasNextDouble()) {
@@ -55,24 +60,34 @@ public class Console {
         System.out.println("Ошибка: " + exceptionMessage);
     }
 
+    public void EnterDataStation(StationDataDto stationDataDto) throws IOException {
+        int stationNumber = getIntInput("Input station number: ");
+        stationDataDto.setStationNumber(stationNumber);
+        String city = getStringInput("input city: ");
+        stationDataDto.setCity(city);
+        double temperature = getDoubleInput("Input temperature: ");
+        stationDataDto.setTemperature(temperature);
+        double pressure = getDoubleInput("Input pressure: ");
+        stationDataDto.setPressure(pressure);
+        double windSpeed = getDoubleInput("Input wind speed: ");
+        stationDataDto.setWindSpeed(windSpeed);
+        String windDirection = getStringInput("input wind direction: ");
+        stationDataDto.setWindDirection(windDirection);
+        try{
+            validation.firstValidation(stationDataDto);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Неверные данные: " + e.getMessage());
+        }
+        StationDataCsvEntity stationDataCsvEntity = stationDataMapper.toStationDataCsvEntity(stationDataDto);
+
+        repositoryStationCsv.write(stationDataCsvEntity);
+
+    }
+
+
 
     // Закрытие сканера
     public void close() {
         scanner.close();
-    }
-
-    public static void main(String[] args) {
-        Console console = new Console();
-
-        // Пример использования
-        String name = console.getStringInput("Введите ваше имя: ");
-        int age = console.getIntInput("Введите ваш возраст: ");
-        double salary = console.getDoubleInput("Введите вашу зарплату: ");
-
-        System.out.println("Имя: " + name);
-        System.out.println("Возраст: " + age);
-        System.out.println("Зарплата: " + salary);
-
-        console.close();
     }
 }

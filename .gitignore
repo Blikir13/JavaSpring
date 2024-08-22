@@ -14,6 +14,9 @@ out/
 bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
+**/*.iml
+**/*.csv
+
 
 ### NetBeans ###
 /nbproject/private/
@@ -21,9 +24,11 @@ bin/
 /dist/
 /nbdist/
 /.nb-gradle/
+/q.txt
 
 ### VS Code ###
 .vscode/
 
 ### Mac OS ###
 .DS_Store
+/.idea/

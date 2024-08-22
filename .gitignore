@@ -15,7 +15,7 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 **/*.iml
-**/*.csv
+
 
 
 ### NetBeans ###

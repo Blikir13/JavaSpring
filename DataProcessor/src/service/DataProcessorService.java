@@ -1,50 +1,54 @@
 package service;
 
+import controller.Controller;
+import repository.entity.ResponseEntity;
 import repository.entity.StationDataEntity;
 
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class DataProcessorService {
     private String serverHost;
     private int serverPort;
     private StationDataEntity processorEntity = new StationDataEntity();
+    private final Controller controller = new Controller();
 
-    public DataProcessorService(String serverHost, int serverPort) {
+    public DataProcessorService(String serverHost, int serverPort) throws IOException {
         this.serverHost = serverHost;
         this.serverPort = serverPort;
     }
 
     public void start() {
-        try (Socket socket = new Socket(serverHost, serverPort)) {
+        try (ServerSocket serverSocket = new ServerSocket(5001)) {
+            System.out.println("Сервер запущен, ожидаем подключения...");
 
+            while (true) {
+                try (Socket clientSocket = serverSocket.accept();
+                     ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream());
+                     ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream())) {
 
-            System.out.println("Connected to ServiceB");
+                    System.out.println("Клиент подключен.");
 
+                    // Принимаем объект от клиента
+                    StationDataEntity stationDataEntity = (StationDataEntity) in.readObject();
+                    ResponseEntity responseEntity = controller.process(stationDataEntity);
+                    System.out.println("Принят объект: " + stationDataEntity);
 
-            try {
-
-                byte[] byteArray = socket.getInputStream().readAllBytes();  // Чтение всех байт
-
-                ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(byteArray);
-                ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
-                StationDataEntity responseObject = (StationDataEntity) objectInputStream.readObject();
-
-                System.out.println("Received from ServiceB: " + responseObject.getCity());
-
-
-            } catch (EOFException eof) {
-                System.out.println("End of stream reached. Waiting for new data...");
+                    // Отправляем ответ клиенту
+                    out.writeObject(responseEntity);
+                    out.flush();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-
-
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         DataProcessorService serviceA = new DataProcessorService("localhost", 12345);
         while (true) {
             serviceA.start();

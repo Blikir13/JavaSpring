@@ -4,12 +4,17 @@ import dto.StationDataDto;
 import repository.entity.StationDataCsvEntity;
 import repository.entity.StationDataEntity;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
 public class StationDataMapper {
     public StationDataCsvEntity toStationDataCsvEntity(StationDataDto stationDataDto) {
         StationDataCsvEntity stationDataCsvEntity = new StationDataCsvEntity();
         stationDataCsvEntity.setId(1);
         stationDataCsvEntity.setStationNumber(stationDataDto.getStationNumber());
-        stationDataCsvEntity.setTimestamp("");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String now = LocalDateTime.now().format(formatter);;
+        stationDataCsvEntity.setTimestamp(now);
         stationDataCsvEntity.setFileName("");
         return stationDataCsvEntity;
     }

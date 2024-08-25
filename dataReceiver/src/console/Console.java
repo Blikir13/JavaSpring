@@ -3,7 +3,6 @@ package console;
 import dto.StationDataDto;
 import mapper.StationDataMapper;
 import repository.entity.StationDataCsvEntity;
-import repository.entity.StationDataEntity;
 import repository.impl.RepositoryStationCsv;
 import validation.Validation;
 
@@ -12,6 +11,7 @@ import java.util.Scanner;
 
 public class Console {
     private final Scanner scanner;
+    //TODO: "stationData.csv вынести в проперти
     private final RepositoryStationCsv repositoryStationCsv = new RepositoryStationCsv("stationData.csv");
     private final Validation validation = new Validation();
     private final StationDataMapper stationDataMapper = new StationDataMapper();
@@ -36,6 +36,7 @@ public class Console {
         return result;
     }
 
+    //TODO: дублирование кода, один метод на операцию, различие только в scanner.hasNextDouble(); -- Обсудить с Андреем как стандартизировать
     public double getDoubleInput(String prompt) {
         System.out.print(prompt);
         while (!scanner.hasNextDouble()) {
@@ -60,7 +61,8 @@ public class Console {
         System.out.println("Ошибка: " + exceptionMessage);
     }
 
-    public void EnterDataStation(StationDataDto stationDataDto) throws IOException {
+    //FIXME: метод с большой буквы
+    public void enterDataStation(StationDataDto stationDataDto) throws IOException {
         int stationNumber = getIntInput("Input station number: ");
         stationDataDto.setStationNumber(stationNumber);
         String city = getStringInput("input city: ");
@@ -82,6 +84,10 @@ public class Console {
 
         repositoryStationCsv.write(stationDataCsvEntity);
 
+    }
+
+    public void updateCsv(String path) throws IOException {
+        repositoryStationCsv.update(path);
     }
 
 

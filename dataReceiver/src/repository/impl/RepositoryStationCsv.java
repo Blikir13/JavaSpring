@@ -3,35 +3,34 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.List;
 
 import dto.StationDataDto;
 import repository.Repository;
 import repository.entity.StationDataCsvEntity;
+import util.CsvLoader;
 
+//TODO: совместить с CVL loader
 public class RepositoryStationCsv implements Repository {
-    private final String filePath;
+    private final CsvLoader csvLoader;
 
     public RepositoryStationCsv(String filePath) {
-        this.filePath = filePath;
+        this.csvLoader = new CsvLoader(filePath);
     }
 
     @Override
     public void write(StationDataCsvEntity stationDataCsvEntity) throws IOException {
-        File file = new File(filePath);
-        if (!file.exists()) {
-            file.createNewFile();
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-                writer.write("id,station_number,timestamp,file_name");
-                writer.newLine();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-            writer.write(stationDataCsvEntity.toCSV());
-            writer.newLine();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        List<StationDataCsvEntity> csvEntities = csvLoader.loadStationData();
+        System.out.println("id: " + csvEntities.size()+1);
+        stationDataCsvEntity.setId(csvEntities.size()+1);
+        csvLoader.write(stationDataCsvEntity);
+
+    }
+
+    public void update(String path) throws IOException {
+        List<StationDataCsvEntity> csvEntities = csvLoader.loadStationData();
+        StationDataCsvEntity last = csvEntities.get(csvEntities.size() - 1);
+        last.setFileName(path);
+        csvLoader.reWrite(csvEntities);
     }
 }

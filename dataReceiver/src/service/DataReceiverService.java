@@ -1,59 +1,63 @@
 package service;
 
 import java.io.*;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Objects;
 
 import console.Console;
 import dto.StationDataDto;
 import mapper.StationDataMapper;
+import repository.entity.ResponseEntity;
 import repository.entity.StationDataEntity;
 
 
 public class DataReceiverService {
-    private int port;
-    private Console console = new Console();
-    private StationDataDto stationDataDto = new StationDataDto();
-    private StationDataMapper stationDataMapper = new StationDataMapper();
+    private final int port;
+    private final Console console = new Console();
+    private final StationDataDto stationDataDto = new StationDataDto();
+    private final StationDataMapper stationDataMapper = new StationDataMapper();
 
     public DataReceiverService(int port) {
         this.port = port;
     }
 
-    public void start() {
-        try (ServerSocket serverSocket = new ServerSocket(port)) {
-            System.out.println("ServiceB is listening on port " + port);
+
+    public void start() throws IOException {
 
 
-                console.EnterDataStation(stationDataDto);
-                StationDataEntity stationDataEntity = stationDataMapper.toStationDataEntity(stationDataDto);
+        String continueInput;
+        while (true) {
 
-                System.out.println("res " + stationDataDto.getStationNumber());
+            console.enterDataStation(stationDataDto);
+            StationDataEntity stationDataEntity = stationDataMapper.toStationDataEntity(stationDataDto);
 
-                try (Socket socket = serverSocket.accept()) {
+            try (Socket socket = new Socket("localhost", 5001);
+                 ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+                 ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
+                // Отправляем объект на сервер
+                out.writeObject(stationDataEntity);
+                out.flush();
 
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
-                    objectOutputStream.writeObject(stationDataEntity);
-                    objectOutputStream.flush();
+                // Получаем ответ от сервера
+                ResponseEntity response = (ResponseEntity) in.readObject();
+                System.out.println("Ответ сервера: " + response.toString());
 
-                    byte[] byteArray = byteArrayOutputStream.toByteArray();
-
-                    socket.getOutputStream().write(byteArray);
-                    socket.getOutputStream().flush();
-
-
-                    System.out.println("Sent: " + stationDataEntity.getCity());
-
-
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+                if (Objects.equals(response.getId(), "")) {
+                    // TODO: log error
+                    System.out.println("error" + response.getErrorMessage());
+                } else {
+                    console.updateCsv(response.getId());
                 }
 
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
+
+
     }
 
 }

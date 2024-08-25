@@ -1,0 +1,11 @@
+{
+  "Moscow":
+  {"min": -35,
+    "max": 35},
+  "Sochi":
+  {"min": -5,
+    "max": 45},
+  "Saratov":
+  {"min": -10,
+    "max": 37}
+}

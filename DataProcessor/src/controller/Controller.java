@@ -18,14 +18,14 @@ public class Controller {
 
     public Controller(Config configd) throws IOException {
         config = configd;
-        validation = new Validation(config.getTemperatureJsonPath(), config.getCitiesJsonPath());
+        validation = new Validation(config);
     }
 
     public ResponseEntity process(StationDataEntity stationDataEntity, Config config){
         try {
             validation.isStationExist(stationDataEntity);
             StationDataJsonEntity stationDataJsonEntity = stationDataMapper.toStationDataJsonEntity(stationDataEntity);
-            stationDataJson.write(stationDataJsonEntity);
+            stationDataJson.write(stationDataJsonEntity, config.getResultJsonPath());
             return new ResponseEntity(stationDataJsonEntity.getId() + ".json", "");
 
 

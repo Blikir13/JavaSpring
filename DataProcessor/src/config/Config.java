@@ -8,6 +8,7 @@ public class Config {
     private int port;
     private String citiesJsonPath;
     private String temperatureJsonPath;
+    private String resultJsonPath;
 
     public Config() {
         Properties properties = new Properties();
@@ -16,9 +17,14 @@ public class Config {
             this.port = Integer.parseInt(properties.getProperty("processor.port"));
             this.citiesJsonPath = properties.getProperty("processor.cities.json");
             this.temperatureJsonPath = properties.getProperty("processor.temperature.json");
+            this.resultJsonPath = properties.getProperty("processor.result.json");
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public String getResultJsonPath() {
+        return resultJsonPath;
     }
 
     public int getPort() {

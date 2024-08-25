@@ -51,10 +51,10 @@ public class JsonReader {
         }
     }
 
-    public void writeJson(StationDataJsonEntity stationDataJsonEntity) throws IOException {
+    public void writeJson(StationDataJsonEntity stationDataJsonEntity, String resPath) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        stationDataJsonEntity.setId(getNextFileNumber("."));
-        String path = getNextFileNumber(".") + ".json";
+        stationDataJsonEntity.setId(getNextFileNumber(resPath));
+        String path = resPath + "/" + getNextFileNumber(resPath) + ".json";
         File file = new File(path);
         file.createNewFile();
         try (FileWriter writer = new FileWriter(path)) {

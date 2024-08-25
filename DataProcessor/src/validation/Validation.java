@@ -11,8 +11,9 @@ public class Validation {
     private JsonReader jsonReader;
     private Config config;
 
-    public Validation(String temperatureJsonPath, String citiesJsonPath) throws IOException {
-        jsonReader = new JsonReader(temperatureJsonPath, citiesJsonPath);
+    public Validation(Config configd) throws IOException {
+        config = configd;
+        jsonReader = new JsonReader(configd.getTemperatureJsonPath(), config.getCitiesJsonPath());
     }
 
     public void isStationExist(StationDataEntity stationDataEntity) {

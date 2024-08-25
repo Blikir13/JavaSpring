@@ -80,7 +80,11 @@ public class CsvLoader {
                 record.setId(Integer.parseInt(values[0]));
                 record.setStationNumber(Integer.parseInt(values[1]));
                 record.setTimestamp(values[2]);
-                record.setFileName("");
+                if (values.length == 4) {
+                    record.setFileName(values[3]);
+                } else {
+                    record.setFileName("");
+                }
 
                 csvEntities.add(record);
             }

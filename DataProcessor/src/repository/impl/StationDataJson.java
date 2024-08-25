@@ -8,12 +8,12 @@ import util.JsonReader;
 import java.io.IOException;
 
 public class StationDataJson {
-    private JsonReader jsonReader = new JsonReader();
+    private final JsonReader jsonReader = new JsonReader();
 
     public StationDataJson() throws IOException {
     }
 
-    public void write(StationDataJsonEntity stationDataJsonEntity) throws IOException {
-        jsonReader.writeJson(stationDataJsonEntity);
+    public void write(StationDataJsonEntity stationDataJsonEntity, String path) throws IOException {
+        jsonReader.writeJson(stationDataJsonEntity, path);
     }
 }

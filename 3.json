@@ -1,9 +1,0 @@
-{
-  "id": 3,
-  "stationNumber": 2,
-  "city": "Sochi",
-  "temperature": 2.0,
-  "pressure": 23.0,
-  "windSpeed": 23.0,
-  "windDirection": "2"
-}

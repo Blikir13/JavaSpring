@@ -54,7 +54,6 @@ public class JsonReader {
     public void writeJson(StationDataJsonEntity stationDataJsonEntity) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
         stationDataJsonEntity.setId(getNextFileNumber("."));
-        System.out.println("new id: " + getNextFileNumber("."));
         String path = getNextFileNumber(".") + ".json";
         File file = new File(path);
         file.createNewFile();

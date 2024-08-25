@@ -1,5 +1,6 @@
 package controller;
 
+import config.Config;
 import mapper.StationDataMapper;
 import repository.entity.ResponseEntity;
 import repository.entity.StationDataEntity;
@@ -10,14 +11,17 @@ import validation.Validation;
 import java.io.IOException;
 
 public class Controller {
-    private final Validation validation = new Validation();
     private final StationDataJson stationDataJson = new StationDataJson();
     private final StationDataMapper stationDataMapper = new StationDataMapper();
+    private final Config config;
+    private final Validation validation;
 
-    public Controller() throws IOException {
+    public Controller(Config configd) throws IOException {
+        config = configd;
+        validation = new Validation(config.getTemperatureJsonPath(), config.getCitiesJsonPath());
     }
 
-    public ResponseEntity process(StationDataEntity stationDataEntity){
+    public ResponseEntity process(StationDataEntity stationDataEntity, Config config){
         try {
             validation.isStationExist(stationDataEntity);
             StationDataJsonEntity stationDataJsonEntity = stationDataMapper.toStationDataJsonEntity(stationDataEntity);

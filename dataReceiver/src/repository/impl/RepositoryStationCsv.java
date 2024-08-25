@@ -21,7 +21,6 @@ public class RepositoryStationCsv implements Repository {
     @Override
     public void write(StationDataCsvEntity stationDataCsvEntity) throws IOException {
         List<StationDataCsvEntity> csvEntities = csvLoader.loadStationData();
-        System.out.println("id: " + csvEntities.size()+1);
         stationDataCsvEntity.setId(csvEntities.size()+1);
         csvLoader.write(stationDataCsvEntity);
 

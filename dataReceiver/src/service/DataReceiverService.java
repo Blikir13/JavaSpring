@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
 
+import config.Config;
 import console.Console;
 import dto.StationDataDto;
 import mapper.StationDataMapper;
@@ -13,12 +14,15 @@ import repository.entity.StationDataEntity;
 
 public class DataReceiverService {
     private final int port;
+    private final String host;
+    private final Config config = new Config();
     private final Console console = new Console();
     private final StationDataDto stationDataDto = new StationDataDto();
     private final StationDataMapper stationDataMapper = new StationDataMapper();
 
-    public DataReceiverService(int port) {
-        this.port = port;
+    public DataReceiverService() {
+        this.port = config.getPort();
+        this.host = config.getHost();
     }
 
 

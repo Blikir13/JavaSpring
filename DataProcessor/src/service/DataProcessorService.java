@@ -1,5 +1,6 @@
 package service;
 
+import config.Config;
 import controller.Controller;
 import repository.entity.ResponseEntity;
 import repository.entity.StationDataEntity;
@@ -9,18 +10,17 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class DataProcessorService {
-    private String serverHost;
-    private int serverPort;
+    private final int serverPort;
     private StationDataEntity processorEntity = new StationDataEntity();
-    private final Controller controller = new Controller();
+    private final Config config = new Config();
+    private final Controller controller = new Controller(config);
 
     public DataProcessorService(String serverHost, int serverPort) throws IOException {
-        this.serverHost = serverHost;
-        this.serverPort = serverPort;
+        this.serverPort = config.getPort();
     }
 
     public void start() {
-        try (ServerSocket serverSocket = new ServerSocket(5001)) {
+        try (ServerSocket serverSocket = new ServerSocket(serverPort)) {
             System.out.println("Сервер запущен, ожидаем подключения...");
 
             while (true) {
@@ -32,7 +32,7 @@ public class DataProcessorService {
 
                     // Принимаем объект от клиента
                     StationDataEntity stationDataEntity = (StationDataEntity) in.readObject();
-                    ResponseEntity responseEntity = controller.process(stationDataEntity);
+                    ResponseEntity responseEntity = controller.process(stationDataEntity, config);
                     System.out.println("Принят объект: " + stationDataEntity);
 
                     // Отправляем ответ клиенту
@@ -47,11 +47,4 @@ public class DataProcessorService {
         }
     }
 
-
-    public static void main(String[] args) throws IOException {
-        DataProcessorService serviceA = new DataProcessorService("localhost", 12345);
-        while (true) {
-            serviceA.start();
-        }
-    }
 }

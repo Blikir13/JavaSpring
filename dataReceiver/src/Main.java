@@ -10,7 +10,7 @@ public class Main {
         //TODO: создавать объекты, пробрасываем в них проперти: консоль, сервис, репо, в чьи конструкторы передавать необходимые компоненты-свойства (репо, сервис итд)
 
 
-        DataReceiverService serviceB = new DataReceiverService(12345);
+        DataReceiverService serviceB = new DataReceiverService();
         serviceB.start();
     }
 }

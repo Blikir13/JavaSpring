@@ -1,5 +1,6 @@
 package validation;
 
+import config.Config;
 import repository.entity.StationDataEntity;
 import util.JsonReader;
 
@@ -8,9 +9,10 @@ import java.util.Objects;
 
 public class Validation {
     private JsonReader jsonReader;
+    private Config config;
 
-    public Validation() throws IOException {
-        jsonReader = new JsonReader("json1.json", "json2.json");
+    public Validation(String temperatureJsonPath, String citiesJsonPath) throws IOException {
+        jsonReader = new JsonReader(temperatureJsonPath, citiesJsonPath);
     }
 
     public void isStationExist(StationDataEntity stationDataEntity) {

@@ -2,8 +2,7 @@ package mapper;
 
 import dto.StationDataDto;
 import repository.entity.StationDataCsvEntity;
-import repository.entity.Request.CreateEntity;
-import repository.entity.Request.UpdateEntity;
+import repository.entity.StationDataEntity;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -20,8 +19,8 @@ public class StationDataMapper {
         return stationDataCsvEntity;
     }
 
-    public CreateEntity toStationDataEntity(StationDataDto stationDataDto) {
-        CreateEntity stationDataEntity = new CreateEntity();
+    public StationDataEntity toStationDataEntity(StationDataDto stationDataDto) {
+        StationDataEntity stationDataEntity = new StationDataEntity();
         stationDataEntity.setStationNumber(stationDataDto.getStationNumber());
         stationDataEntity.setCity(stationDataDto.getCity());
         stationDataEntity.setPressure(stationDataDto.getPressure());
@@ -29,18 +28,6 @@ public class StationDataMapper {
         stationDataEntity.setWindSpeed(stationDataDto.getWindSpeed());
         stationDataEntity.setWindDirection(stationDataDto.getWindDirection());
         return stationDataEntity;
-    }
-
-    public UpdateEntity toUpdateEntity(StationDataDto stationDataDto, String path) {
-        UpdateEntity updateEntity = new UpdateEntity();
-        updateEntity.setStationNumber(stationDataDto.getStationNumber());
-        updateEntity.setCity(stationDataDto.getCity());
-        updateEntity.setPressure(stationDataDto.getPressure());
-        updateEntity.setTemperature(stationDataDto.getTemperature());
-        updateEntity.setWindSpeed(stationDataDto.getWindSpeed());
-        updateEntity.setWindDirection(stationDataDto.getWindDirection());
-        updateEntity.setPath(path);
-        return updateEntity;
     }
 
 }

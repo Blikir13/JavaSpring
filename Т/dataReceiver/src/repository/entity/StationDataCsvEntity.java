@@ -41,8 +41,4 @@ public class StationDataCsvEntity {
     public String toCSV() {
         return id + "," + stationNumber + "," + timestamp + "," + fileName;
     }
-
-    public String toString() {
-        return id + "," + stationNumber + "," + timestamp + "," + fileName;
-    }
 }

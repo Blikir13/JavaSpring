@@ -9,6 +9,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,10 +52,18 @@ public class JsonReader {
         }
     }
 
-    public void writeJson(StationDataJsonEntity stationDataJsonEntity, String resPath) throws IOException {
+    public void writeJson(StationDataJsonEntity stationDataJsonEntity, String resPath, String updatePath) throws IOException {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        stationDataJsonEntity.setId(getNextFileNumber(resPath));
-        String path = resPath + "/" + getNextFileNumber(resPath) + ".json";
+        String path = "";
+        if (Objects.equals(updatePath, "")) {
+            stationDataJsonEntity.setId(getNextFileNumber(resPath));
+            path = resPath + "/" + getNextFileNumber(resPath) + ".json";
+        } else {
+            int dotIndex1 = updatePath.indexOf(".json");
+            int id = Integer.parseInt(updatePath.substring(0, dotIndex1));
+            stationDataJsonEntity.setId(id);
+            path = resPath + "/" + updatePath;
+        }
         File file = new File(path);
         file.createNewFile();
         try (FileWriter writer = new FileWriter(path)) {

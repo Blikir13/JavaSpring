@@ -1,4 +1,4 @@
-package repository.entity;
+package repository.entity.Response;
 
 import java.io.Serializable;
 
@@ -10,6 +10,10 @@ public class ResponseEntity implements Serializable {
     public ResponseEntity(String id, String errorMessage) {
         this.id = id;
         this.errorMessage = errorMessage;
+    }
+
+    public ResponseEntity() {
+
     }
 
     public String getErrorMessage() {

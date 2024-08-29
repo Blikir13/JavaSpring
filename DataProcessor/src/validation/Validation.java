@@ -1,7 +1,7 @@
 package validation;
 
 import config.Config;
-import repository.entity.StationDataEntity;
+import repository.entity.Request.CreateEntity;
 import util.JsonReader;
 
 import java.io.IOException;
@@ -16,14 +16,14 @@ public class Validation {
         jsonReader = new JsonReader(configd.getTemperatureJsonPath(), config.getCitiesJsonPath());
     }
 
-    public void isStationExist(StationDataEntity stationDataEntity) {
-        String city = jsonReader.getCityByStation(stationDataEntity.getStationNumber());
-        if (!Objects.equals(stationDataEntity.getCity(), city)) {
+    public void isStationExist(CreateEntity createEntity) {
+        String city = jsonReader.getCityByStation(createEntity.getStationNumber());
+        if (!Objects.equals(createEntity.getCity(), city)) {
             throw new IllegalArgumentException("Net takogo");
         }
         double minTemp = jsonReader.getMinTemperature(city);
         double maxTemp = jsonReader.getMaxTemperature(city);
-        double temp = stationDataEntity.getTemperature();
+        double temp = createEntity.getTemperature();
         if (temp < minTemp || temp > maxTemp) {
             throw new IllegalArgumentException("Incorrect temperature");
         }

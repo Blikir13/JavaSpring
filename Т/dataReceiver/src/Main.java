@@ -1,4 +1,3 @@
-import console.Console;
 import service.DataReceiverService;
 
 import java.io.IOException;
@@ -10,9 +9,8 @@ public class Main {
         //TODO: создавать объекты, пробрасываем в них проперти: консоль, сервис, репо, в чьи конструкторы передавать необходимые компоненты-свойства (репо, сервис итд)
 
 
-//        DataReceiverService serviceB = new DataReceiverService();
-        Console console = new Console();
-        console.scanCommand();
+        DataReceiverService serviceB = new DataReceiverService();
+        serviceB.start();
     }
 }
 //

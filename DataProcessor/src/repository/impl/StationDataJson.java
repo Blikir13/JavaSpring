@@ -1,7 +1,5 @@
 package repository.impl;
 
-import mapper.StationDataMapper;
-import repository.entity.StationDataEntity;
 import repository.entity.StationDataJsonEntity;
 import util.JsonReader;
 
@@ -13,7 +11,7 @@ public class StationDataJson {
     public StationDataJson() throws IOException {
     }
 
-    public void write(StationDataJsonEntity stationDataJsonEntity, String path) throws IOException {
-        jsonReader.writeJson(stationDataJsonEntity, path);
+    public void write(StationDataJsonEntity stationDataJsonEntity, String path, String updatePath) throws IOException {
+        jsonReader.writeJson(stationDataJsonEntity, path, updatePath);
     }
 }

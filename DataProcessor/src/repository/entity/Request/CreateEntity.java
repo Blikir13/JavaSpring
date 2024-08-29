@@ -1,9 +1,8 @@
-package repository.entity;
+package repository.entity.Request;
 
 import java.io.Serial;
-import java.io.Serializable;
 
-public class StationDataEntity implements Serializable {
+public class CreateEntity extends TransferableObject {
     @Serial
     private static final long serialVersionUID = 1L;
     private int stationNumber;
@@ -13,7 +12,7 @@ public class StationDataEntity implements Serializable {
     private double windSpeed;
     private String windDirection;
 
-    public StationDataEntity() {
+    public CreateEntity() {
 
     }
 

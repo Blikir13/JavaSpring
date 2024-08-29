@@ -1,11 +1,6 @@
-package repository.entity;
+package dto;
 
-import java.io.Serial;
-import java.io.Serializable;
-
-public class StationDataEntity implements Serializable {
-    @Serial
-    private static final long serialVersionUID = 1L;
+public class StationDataDto {
     private int stationNumber;
     private String city;
     private double temperature;
@@ -13,7 +8,7 @@ public class StationDataEntity implements Serializable {
     private double windSpeed;
     private String windDirection;
 
-    public StationDataEntity() {
+    public StationDataDto() {
 
     }
 

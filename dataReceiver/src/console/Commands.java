@@ -3,11 +3,11 @@ package console;
 public enum Commands {
 
     HELP("Enter the 'help' to see all commands"),
-    CREATE("To create request for guest validation"),
+    CREATE("To create record"),
     READ("Read all data"),
     EXIT ("Exit from application"),
-    DELETE("Delete request"),
-    UPDATE("Update request"),
+    DELETE("Delete record"),
+    UPDATE("Update record"),
     ;
 
     private final String description;

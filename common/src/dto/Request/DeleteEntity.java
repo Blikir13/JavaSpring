@@ -1,4 +1,4 @@
-package repository.entity.Request;
+package dto.Request;
 
 public class DeleteEntity extends TransferableObject {
     private String path;

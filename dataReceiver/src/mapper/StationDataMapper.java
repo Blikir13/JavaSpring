@@ -1,10 +1,9 @@
 package mapper;
 
+import Request.CreateEntity;
+import dto.Request.UpdateEntity;
 import dto.StationDataDto;
 import repository.entity.StationDataCsvEntity;
-import repository.entity.Request.CreateEntity;
-import repository.entity.Request.UpdateEntity;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 

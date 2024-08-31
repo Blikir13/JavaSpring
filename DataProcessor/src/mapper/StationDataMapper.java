@@ -1,8 +1,8 @@
 package mapper;
 
-import repository.entity.Request.CreateEntity;
+import Request.CreateEntity;
+import dto.Request.UpdateEntity;
 import repository.entity.StationDataJsonEntity;
-import repository.entity.Request.UpdateEntity;
 
 public class StationDataMapper {
     public StationDataJsonEntity toStationDataJsonEntity(CreateEntity createEntity) {

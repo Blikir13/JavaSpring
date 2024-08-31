@@ -1,6 +1,7 @@
 package repository.entity.Response;
 
-import repository.entity.Request.TransferableObject;
+
+import dto.Request.TransferableObject;
 
 public class ResponseEntity extends TransferableObject {
     private static final long serialVersionUID = 1L;

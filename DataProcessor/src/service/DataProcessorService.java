@@ -1,11 +1,11 @@
 package service;
 
+import Request.CreateEntity;
 import config.Config;
 import controller.Controller;
-import repository.entity.Request.CreateEntity;
-import repository.entity.Request.DeleteEntity;
-import repository.entity.Request.TransferableObject;
-import repository.entity.Request.UpdateEntity;
+import dto.Request.DeleteEntity;
+import dto.Request.TransferableObject;
+import dto.Request.UpdateEntity;
 import repository.entity.Response.ResponseEntity;
 
 import java.io.*;

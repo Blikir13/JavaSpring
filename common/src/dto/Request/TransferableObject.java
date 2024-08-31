@@ -1,4 +1,4 @@
-package repository.entity.Request;
+package dto.Request;
 
 import java.io.Serializable;
 

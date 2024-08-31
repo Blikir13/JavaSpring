@@ -1,11 +1,11 @@
 package controller;
 
+import Request.CreateEntity;
+import dto.Request.UpdateEntity;
 import config.Config;
 import mapper.StationDataMapper;
 import repository.entity.Response.ResponseEntity;
-import repository.entity.Request.CreateEntity;
 import repository.entity.StationDataJsonEntity;
-import repository.entity.Request.UpdateEntity;
 import repository.impl.StationDataJson;
 import validation.Validation;
 

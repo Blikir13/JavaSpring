@@ -6,13 +6,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import Request.CreateEntity;
 import config.Config;
+import dto.Request.DeleteEntity;
+import dto.Request.TransferableObject;
+import dto.Request.UpdateEntity;
 import dto.StationDataDto;
 import mapper.StationDataMapper;
 import repository.entity.*;
-import repository.entity.Request.CreateEntity;
-import repository.entity.Request.TransferableObject;
-import repository.entity.Request.UpdateEntity;
+
 import repository.entity.Response.ResponseEntity;
 
 
@@ -50,7 +52,7 @@ public class DataReceiverService {
         }
     }
     //FIXME public?
-    private String connection(repository.entity.Request.TransferableObject transferableObject){ //FIXME in var?
+    private String connection(TransferableObject transferableObject){ //FIXME in var?
         try (Socket socket = new Socket(host, processorPort); //FIXME variables?
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
@@ -79,8 +81,7 @@ public class DataReceiverService {
     }
 
     public void updateRequest(StationDataDto stationDataDto, String path) {
-        UpdateEntity updateEntity = stationDataMapper.toUpdateEntity(stationDataDto, path);
-        repository.entity.Request.TransferableObject transferableObject = updateEntity; //FIXME inline?
+        TransferableObject transferableObject = stationDataMapper.toUpdateEntity(stationDataDto, path); //FIXME inline?
         // TODO: пока для отладки так создаю
         MonitoringEntity monitoringEntity = new MonitoringEntity();
         monitoringEntity.setStatus("new");
@@ -91,7 +92,6 @@ public class DataReceiverService {
 
 
     public String createRequest(StationDataDto stationDataDto) { //FIXME exception? <3
-        CreateEntity createEntity = stationDataMapper.toStationDataEntity(stationDataDto);
         TransferableObject transferableObject = stationDataMapper.toStationDataEntity(stationDataDto); //FIXME inline? <3
         // TODO: пока для отладки так создаю
         MonitoringEntity monitoringEntity = new MonitoringEntity();
@@ -102,7 +102,7 @@ public class DataReceiverService {
     }
 
     public void deleteRecordRequest(String path) {
-        repository.entity.Request.DeleteEntity deleteEntity = new repository.entity.Request.DeleteEntity(); //FIXME inline?
+        DeleteEntity deleteEntity = new DeleteEntity(); //FIXME inline?
         deleteEntity.setPath(path);
 
         connection(deleteEntity);

@@ -1,4 +1,6 @@
-package repository.entity.Request;
+package Request;
+
+import dto.Request.TransferableObject;
 
 import java.io.Serial;
 

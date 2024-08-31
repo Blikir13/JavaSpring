@@ -1,17 +1,13 @@
 package repository.impl;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import dto.StationDataDto;
+//FIXME not imports? <3
+import java.io.IOException;
+import java.util.List;
 import repository.Repository;
 import repository.entity.StationDataCsvEntity;
 import util.CsvLoader;
 
-//TODO: совместить с CVL loader
+//TODO: совместить с CVL loader <3
 public class RepositoryStationCsv implements Repository {
     private final CsvLoader csvLoader;
 
@@ -38,13 +34,8 @@ public class RepositoryStationCsv implements Repository {
         csvLoader.reWrite(csvEntities);
     }
 
-    public List<String> read() throws IOException {
-        List<StationDataCsvEntity> csvEntities = csvLoader.loadStationData();
-        List<String> result = new ArrayList<String>();;
-        for (StationDataCsvEntity stationDataCsvEntity : csvEntities) {
-            result.add(String.valueOf(stationDataCsvEntity));
-        }
-        return result;
+    public List<StationDataCsvEntity> read() throws IOException {
+        return csvLoader.loadStationData();
     }
 
     public String deleteRecord(int id) throws IOException {
@@ -53,10 +44,8 @@ public class RepositoryStationCsv implements Repository {
         for (int i = csvEntities.size() - 1; i >= 0; i--) {
             StationDataCsvEntity stationDataCsvEntity = csvEntities.get(i);
             if (stationDataCsvEntity.getId() == id) {
-                if (stationDataCsvEntity.getFileName() != null) {
-                    path = stationDataCsvEntity.getFileName();
-                }
-                csvEntities.remove(i); // Удаляем элемент по индексу
+                path = stationDataCsvEntity.getFileName() != null ? stationDataCsvEntity.getFileName() : path;
+                csvEntities.remove(i);
             }
         }
         csvLoader.reWrite(csvEntities);
@@ -69,9 +58,8 @@ public class RepositoryStationCsv implements Repository {
         for (int i = csvEntities.size() - 1; i >= 0; i--) {
             StationDataCsvEntity stationDataCsvEntity = csvEntities.get(i);
             if (stationDataCsvEntity.getId() == id) {
-                if (stationDataCsvEntity.getFileName() != null) {
-                    path = stationDataCsvEntity.getFileName();
-                }
+                path = stationDataCsvEntity.getFileName() != null ? stationDataCsvEntity.getFileName() : path;
+                // TODO: возмонжо стоит обновлять номер станции после 2 валидации? К
                 stationDataCsvEntity.setStationNumber(stationNumber);
             }
         }

@@ -7,7 +7,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CsvLoader {
+    private static final String csvHeader = "id,station_number,timestamp,file_name";
+    private static final String csvFile = "stationData.csv";
+    private static final String csvSeparator = ",";
     private final String filePath;
+
 
     public CsvLoader(String filePath) {
         this.filePath = filePath;
@@ -17,7 +21,7 @@ public class CsvLoader {
         if (!file.exists()) {
             file.createNewFile();
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
-                writer.write("id,station_number,timestamp,file_name");
+                writer.write(csvHeader); //FIXME var? <3
                 writer.newLine();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -28,7 +32,7 @@ public class CsvLoader {
     private void createFile(File file) throws IOException {
         file.createNewFile();
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
-            writer.write("id,station_number,timestamp,file_name");
+            writer.write(csvHeader); //FIXME var? <3
             writer.newLine();
         } catch (IOException e) {
             e.printStackTrace();
@@ -58,35 +62,40 @@ public class CsvLoader {
         writeDataToFile(stationDataCsvEntity);
     }
 
-    public List<StationDataCsvEntity> loadStationData() throws IOException {
+    private List<StationDataCsvEntity> getLinesFromFile(BufferedReader bufferedReader) throws IOException {
+        String header =  bufferedReader.readLine(); //FIXME definition of read header?
         String line;
-        String csvFile = "stationData.csv";
         List<StationDataCsvEntity> csvEntities = new ArrayList<>();
-        String csvSplitBy = ",";
 
-        File file = new File(filePath);
-        if (!file.exists()) {
-            return csvEntities;
+        while ((line = bufferedReader.readLine()) != null) { //FIXME definition of read dataLine?
+            String[] values = line.split(csvSeparator);
+
+            StationDataCsvEntity record = new StationDataCsvEntity();
+            record.setId(Integer.parseInt(values[0]));
+            record.setStationNumber(Integer.parseInt(values[1]));
+            record.setTimestamp(values[2]);
+            if (values.length == 4) {
+                record.setFileName(values[3]);
+            } else {
+                record.setFileName("");
+            }
+
+            csvEntities.add(record);
         }
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {
-            br.readLine();
+        return csvEntities;
+    }
 
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(csvSplitBy);
+    public List<StationDataCsvEntity> loadStationData() { //FIXME delete throws? <3
+        File file = new File(filePath);
+        if (!file.exists()) {
+            return new ArrayList<>();
+        }
 
-                StationDataCsvEntity record = new StationDataCsvEntity();
-                record.setId(Integer.parseInt(values[0]));
-                record.setStationNumber(Integer.parseInt(values[1]));
-                record.setTimestamp(values[2]);
-                if (values.length == 4) {
-                    record.setFileName(values[3]);
-                } else {
-                    record.setFileName("");
-                }
+        List<StationDataCsvEntity> csvEntities = null;
 
-                csvEntities.add(record);
-            }
+        try (BufferedReader br = new BufferedReader(new FileReader(csvFile))) {//FIXME to method? <3
+            csvEntities = getLinesFromFile(br);
 
         } catch (IOException e) {
             e.printStackTrace();

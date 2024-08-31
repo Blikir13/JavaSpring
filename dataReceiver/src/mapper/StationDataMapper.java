@@ -9,11 +9,12 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class StationDataMapper {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     public StationDataCsvEntity toStationDataCsvEntity(StationDataDto stationDataDto) {
         StationDataCsvEntity stationDataCsvEntity = new StationDataCsvEntity();
         stationDataCsvEntity.setId(1);
         stationDataCsvEntity.setStationNumber(stationDataDto.getStationNumber());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String now = LocalDateTime.now().format(formatter);;
         stationDataCsvEntity.setTimestamp(now);
         stationDataCsvEntity.setFileName("");

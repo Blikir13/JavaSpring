@@ -7,7 +7,7 @@ public enum Commands {
     READ("Read all data"),
     EXIT ("Exit from application"),
     DELETE("Delete record"),
-    UPDATE("Update record"),
+    UPDATE("Update record")
     ;
 
     private final String description;

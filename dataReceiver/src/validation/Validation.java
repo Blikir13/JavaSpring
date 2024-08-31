@@ -2,20 +2,17 @@ package validation;
 
 import dto.StationDataDto;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Validation {
     public void firstValidation(StationDataDto stationDataDto) {
         if (stationDataDto.getStationNumber() <= 0 || stationDataDto.getStationNumber() > 8) {
-            //TODO: add text
-            throw new IllegalArgumentException("some");
+            throw new IllegalArgumentException("Номер станции должен лежать в диапазоне от 0 до 10");
         }
         if (stationDataDto.getWindSpeed() <= 0) {
-            throw new IllegalArgumentException("someText");
+            throw new IllegalArgumentException("Скорость ветра не может быть отрицательной");
         }
         if (stationDataDto.getPressure() <= 0) {
-            throw new IllegalArgumentException("someText");
+            throw new IllegalArgumentException("Давление не может быть отрицательным");
         }
     }
 }

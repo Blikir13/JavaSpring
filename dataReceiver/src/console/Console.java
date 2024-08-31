@@ -1,5 +1,6 @@
 package console;
 
+import config.Config;
 import dto.StationDataDto;
 import mapper.StationDataMapper;
 import repository.entity.StationDataCsvEntity;
@@ -17,10 +18,12 @@ import java.util.Scanner;
 public class Console {
     private final Scanner scanner;
     //TODO: "stationData.csv вынести в проперти
-    private final RepositoryStationCsv repositoryStationCsv = new RepositoryStationCsv("stationData.csv");
+    private static final String filePath = "stationData.csv";
+    private final RepositoryStationCsv repositoryStationCsv = new RepositoryStationCsv(filePath); //FIXME path to var? <3
     private final Validation validation = new Validation();
     private final StationDataMapper stationDataMapper = new StationDataMapper();
-    private final DataReceiverService dataReceiverService = new DataReceiverService();
+    private final Config config = new Config();
+    private final DataReceiverService dataReceiverService = new DataReceiverService(config);
 
     public Console() {
         this.scanner = new Scanner(System.in);
@@ -69,14 +72,13 @@ public class Console {
     }
 
     public void scanCommand() {
-        while (true) {
+        while (true) { //FIXME need a flag?
             StationDataDto stationDataDto = new StationDataDto();
-            String scannedCommand = this.scan();
-            Commands command = Commands.valueOf(scannedCommand);
             try {
-                if (!isKnownCommand(scannedCommand)) {
-                    System.out.println("Вы ввели неизвестную команду. Попробуйте еще раз");
-                    scannedCommand = this.scan();
+                String scannedCommand = this.scan();
+                Commands command = Commands.valueOf(scannedCommand); //FIXME error? <3 перенес в try
+                if (!isKnownCommand(scannedCommand)) {  //FIXME never usage?
+                    System.out.println("Вы ввели неизвестную команду. Введите help, чтобы узнать о командах");
                 }
                 switch (command) {
                     case HELP:
@@ -109,7 +111,8 @@ public class Console {
         }
     }
 
-    public void createRecord(StationDataDto stationDataDto) throws IOException {
+    //FIXME public? <3
+    private void createRecord(StationDataDto stationDataDto) throws IOException {
         int stationNumber = getIntInput("Input station number: ");
         stationDataDto.setStationNumber(stationNumber);
         String city = getStringInput("input city: ");
@@ -122,33 +125,35 @@ public class Console {
         stationDataDto.setWindSpeed(windSpeed);
         String windDirection = getStringInput("input wind direction: ");
         stationDataDto.setWindDirection(windDirection);
+
         try {
             validation.firstValidation(stationDataDto);
+            StationDataCsvEntity stationDataCsvEntity = stationDataMapper.toStationDataCsvEntity(stationDataDto);
+
+            repositoryStationCsv.write(stationDataCsvEntity);
+
+            // возвращает путь созданного json файла
+            String path = dataReceiverService.createRequest(stationDataDto);
+            // TODO: po idee ne mozhet bit' ""
+            if (!Objects.equals(path, "")) {
+                repositoryStationCsv.update(path);
+            }
         } catch (IllegalArgumentException e) {
             System.out.println("Неверные данные: " + e.getMessage());
         }
-        StationDataCsvEntity stationDataCsvEntity = stationDataMapper.toStationDataCsvEntity(stationDataDto);
 
-        repositoryStationCsv.write(stationDataCsvEntity);
-
-        // возвращает путь созданного json файла
-        String path = dataReceiverService.createRequest(stationDataDto);
-        // TODO: po idee ne mozhet bit' ""
-        if (!Objects.equals(path, "")) {
-            repositoryStationCsv.update(path);
-        }
 
     }
-
-    public void readRecords() throws IOException {
-        List<String> readRecords = repositoryStationCsv.read();
+    //FIXME public? <3
+    private void readRecords() throws IOException {
+        List<StationDataCsvEntity> readRecords = repositoryStationCsv.read();
         System.out.println("Доступные записи по станциям:");
-        for (String record : readRecords) {
+        for (StationDataCsvEntity record : readRecords) {
             System.out.println(record);
         }
     }
-
-    public void deleteRecord() throws IOException {
+    //FIXME public? <3
+    private void deleteRecord() throws IOException {
         int id = getIntInput("Input id to delete: ");
         String path = repositoryStationCsv.deleteRecord(id);
         System.out.println("path " + path);
@@ -156,9 +161,8 @@ public class Console {
             dataReceiverService.deleteRecordRequest(path);
         }
     }
-
-    // TODO: check parameter
-    public void updateRecord(StationDataDto stationDataDto) throws IOException {
+    //FIXME public? <3
+    private void updateRecord(StationDataDto stationDataDto) throws IOException {
         int id = getIntInput("Input id to update: ");
 
         int stationNumber = getIntInput("Input station number: ");
@@ -186,9 +190,9 @@ public class Console {
         }
 
     }
-
+    //FIXME public? <3
     // Закрытие сканера
-    public void close() {
+    private void close() {
         scanner.close();
     }
 }

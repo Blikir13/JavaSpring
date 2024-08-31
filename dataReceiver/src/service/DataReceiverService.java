@@ -6,35 +6,38 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
+import config.Config;
 import dto.StationDataDto;
 import mapper.StationDataMapper;
 import repository.entity.*;
+import repository.entity.Request.CreateEntity;
 import repository.entity.Request.TransferableObject;
 import repository.entity.Request.UpdateEntity;
 import repository.entity.Response.ResponseEntity;
 
 
 public class DataReceiverService {
-//    private final int port;
-//    private final String host;
-//    private final Config config = new Config();
-//    private final Console console = new Console();
-    private final StationDataDto stationDataDto = new StationDataDto();
+    private final int processorPort;
+    private final int monitoringPort;
+    private final String host;
+    private final static String pattern = "yyyy-MM-dd HH:mm:ss";
+    private final static String created = "created";
     private final StationDataMapper stationDataMapper = new StationDataMapper();
 
-    public DataReceiverService() {
-//        this.port = config.getPort();
-//        this.host = config.getHost();
+
+    public DataReceiverService(Config config) {
+        processorPort = config.getProcessorPort();
+        monitoringPort = config.getMonitoringPort();
+        host = config.getHost();
     }
 
     public void sendMessageMonitoring(MonitoringEntity monitoringEntity, String status) {
-        try (Socket socket = new Socket("localhost", 5002);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+        try (Socket socket = new Socket(host, monitoringPort);
+             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) { //FIXME not usage?<3
 
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern); //FIXME in var? <3
             String now = LocalDateTime.now().format(formatter);
-            ;
+            ; //FIXME duplicate? ?
             monitoringEntity.setDate(now);
             monitoringEntity.setStatus(status);
 
@@ -43,12 +46,12 @@ public class DataReceiverService {
             out.flush();
 
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); //FIXME in var?
         }
     }
-
-    public String connection(repository.entity.Request.TransferableObject transferableObject){
-        try (Socket socket = new Socket("localhost", 5001);
+    //FIXME public?
+    private String connection(repository.entity.Request.TransferableObject transferableObject){ //FIXME in var?
+        try (Socket socket = new Socket(host, processorPort); //FIXME variables?
              ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
              ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
@@ -57,7 +60,7 @@ public class DataReceiverService {
             out.flush();
 
             // Получаем ответ от сервера
-            repository.entity.Response.ResponseEntity response = (ResponseEntity) in.readObject();
+            repository.entity.Response.ResponseEntity response = (ResponseEntity) in.readObject(); //FIXME import?
             System.out.println("Ответ сервера: " + response.toString());
 
             if (Objects.equals(response.getId(), "")) {
@@ -76,30 +79,30 @@ public class DataReceiverService {
     }
 
     public void updateRequest(StationDataDto stationDataDto, String path) {
-        UpdateEntity stationDataEntity = stationDataMapper.toUpdateEntity(stationDataDto, path);
-        repository.entity.Request.TransferableObject transferableObject = stationDataEntity;
+        UpdateEntity updateEntity = stationDataMapper.toUpdateEntity(stationDataDto, path);
+        repository.entity.Request.TransferableObject transferableObject = updateEntity; //FIXME inline?
         // TODO: пока для отладки так создаю
         MonitoringEntity monitoringEntity = new MonitoringEntity();
         monitoringEntity.setStatus("new");
-        sendMessageMonitoring(monitoringEntity, "created");
+        sendMessageMonitoring(monitoringEntity, created);
 
-        connection(transferableObject);
+        connection(transferableObject); //FIXME return value? добавить возвращение реза
     }
 
 
-    public String createRequest(StationDataDto stationDataDto) throws IOException {
-        repository.entity.Request.CreateEntity stationDataEntity = stationDataMapper.toStationDataEntity(stationDataDto);
-        TransferableObject transferableObject = stationDataEntity;
+    public String createRequest(StationDataDto stationDataDto) { //FIXME exception? <3
+        CreateEntity createEntity = stationDataMapper.toStationDataEntity(stationDataDto);
+        TransferableObject transferableObject = stationDataMapper.toStationDataEntity(stationDataDto); //FIXME inline? <3
         // TODO: пока для отладки так создаю
         MonitoringEntity monitoringEntity = new MonitoringEntity();
-        monitoringEntity.setStatus("new");
-        sendMessageMonitoring(monitoringEntity, "created");
+        monitoringEntity.setStatus("new"); //FIXME to var?
+        sendMessageMonitoring(monitoringEntity, created); //FIXME to var?
 
         return connection(transferableObject);
     }
 
     public void deleteRecordRequest(String path) {
-        repository.entity.Request.DeleteEntity deleteEntity = new repository.entity.Request.DeleteEntity();
+        repository.entity.Request.DeleteEntity deleteEntity = new repository.entity.Request.DeleteEntity(); //FIXME inline?
         deleteEntity.setPath(path);
 
         connection(deleteEntity);

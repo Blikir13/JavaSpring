@@ -1,6 +1,4 @@
-package Request;
-
-import dto.Request.TransferableObject;
+package dto.Request;
 
 import java.io.Serial;
 

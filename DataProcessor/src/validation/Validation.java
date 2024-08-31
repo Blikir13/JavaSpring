@@ -1,7 +1,7 @@
 package validation;
 
-import Request.CreateEntity;
 import config.Config;
+import dto.Request.CreateEntity;
 import util.JsonReader;
 
 import java.io.IOException;

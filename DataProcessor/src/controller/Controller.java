@@ -1,6 +1,6 @@
 package controller;
 
-import Request.CreateEntity;
+import dto.Request.CreateEntity;
 import dto.Request.UpdateEntity;
 import config.Config;
 import mapper.StationDataMapper;

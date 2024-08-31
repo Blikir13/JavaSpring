@@ -1,6 +1,6 @@
 package mapper;
 
-import Request.CreateEntity;
+import dto.Request.CreateEntity;
 import dto.Request.UpdateEntity;
 import repository.entity.StationDataJsonEntity;
 

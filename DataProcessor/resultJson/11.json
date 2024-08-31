@@ -1,9 +1,9 @@
 {
   "id": 11,
-  "stationNumber": 2,
-  "city": "Sochi",
-  "temperature": 10.0,
-  "pressure": 1.0,
-  "windSpeed": 1.0,
-  "windDirection": "1"
+  "stationNumber": 1,
+  "city": "Moscow",
+  "temperature": 2.0,
+  "pressure": 2.0,
+  "windSpeed": 2.0,
+  "windDirection": "2"
 }

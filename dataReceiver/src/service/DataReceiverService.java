@@ -13,6 +13,7 @@ import repository.entity.*;
 
 import repository.impl.RepositoryStationCsv;
 import transport.client.DataProcessorClient;
+import transport.client.MonitoringClient;
 import validation.Validation;
 
 
@@ -24,10 +25,12 @@ public class DataReceiverService {
     private final RepositoryStationCsv repositoryStationCsv = new RepositoryStationCsv(filePath); //FIXME path to var? <3
     private final Validation validation = new Validation();
     private final DataProcessorClient dataProcessorClient;
+    private final MonitoringClient monitoringClient;
 
 
     public DataReceiverService(Config config) {
         dataProcessorClient = new DataProcessorClient(config);
+        monitoringClient = new MonitoringClient(config);
     }
 
     public void updateRequest(StationDataDto stationDataDto, int id) throws IOException {
@@ -48,22 +51,18 @@ public class DataReceiverService {
     }
 
 
-    public void createRequest(StationDataDto stationDataDto) { //FIXME exception? <3
-        // TODO: validation -> repository -> transfer
+    public void createRequest(StationDataDto stationDataDto) {
         try {
-            // TODO: валидация конкретной переменной
             validation.firstValidation(stationDataDto);
-            StationDataCsvEntity stationDataCsvEntity = stationDataMapper.toStationDataCsvEntity(stationDataDto);
 
+            StationDataCsvEntity stationDataCsvEntity = stationDataMapper.toStationDataCsvEntity(stationDataDto);
             repositoryStationCsv.write(stationDataCsvEntity);
 
+            MonitoringEntity monitoringEntity = new MonitoringEntity(stationDataCsvEntity.toString(), created);
+            monitoringClient.sendRequest(monitoringEntity);
+
             TransferableObject transferableObject = stationDataMapper.toStationDataEntity(stationDataDto);
-            // возвращает путь созданного json файла
             String path = dataProcessorClient.sendRequest(transferableObject);
-            // TODO: пока для отладки так создаю
-//            MonitoringEntity monitoringEntity = new MonitoringEntity();
-//            monitoringEntity.setStatus("new"); //FIXME to var?
-//            sendMessageMonitoring(monitoringEntity, created); //FIXME to var?
 
             if (!Objects.equals(path, "")) {
                 repositoryStationCsv.update(path);

@@ -13,17 +13,15 @@ public class DataProcessorClient {
     private ObjectOutputStream objectOutputStream;
     private ObjectInputStream objectInputStream;
     private final int processorPort;
-    private final int monitoringPort;
     private final String host;
 
     public DataProcessorClient(Config config) {
         this.processorPort = config.getProcessorPort();;
-        this.monitoringPort = config.getMonitoringPort();
         this.host = config.getHost();
     }
 
     private void connect() throws IOException {
-        Socket socket = new Socket(host, processorPort);
+        socket = new Socket(host, processorPort);
         objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
         objectInputStream = new ObjectInputStream(socket.getInputStream());
     }

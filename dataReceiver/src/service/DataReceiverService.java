@@ -1,9 +1,6 @@
 package service;
 
 import java.io.*;
-import java.net.Socket;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Objects;
 
@@ -14,7 +11,6 @@ import dto.StationDataDto;
 import mapper.StationDataMapper;
 import repository.entity.*;
 
-import repository.entity.Response.ResponseEntity;
 import repository.impl.RepositoryStationCsv;
 import transport.client.DataProcessorClient;
 import validation.Validation;

@@ -2,17 +2,13 @@ package console;
 
 import config.Config;
 import dto.StationDataDto;
-import mapper.StationDataMapper;
 import repository.entity.StationDataCsvEntity;
-import repository.impl.RepositoryStationCsv;
 import service.DataReceiverService;
-import validation.Validation;
 
 import java.util.Locale;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
 import java.util.Scanner;
 
 public class Console {
@@ -85,8 +81,8 @@ public class Console {
     }
 
     public void scanCommand() {
-        while (true) { //FIXME need a flag?
-            StationDataDto stationDataDto = new StationDataDto();
+        boolean flag = true;
+        while (flag) { //FIXME need a flag?
             try {
                 String scannedCommand = this.scan();
                 Commands command = Commands.valueOf(scannedCommand); //FIXME error? <3 перенес в try
@@ -110,7 +106,7 @@ public class Console {
                         updateRecord();
                         break;
                     case EXIT:
-                        System.exit(0);
+                        flag = false;
                     default:
                         System.out.println("Unknown command");
                         break;

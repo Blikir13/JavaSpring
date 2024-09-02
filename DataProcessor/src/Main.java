@@ -1,10 +1,12 @@
 import service.DataProcessorService;
+import transport.client.DataReceiverClient;
 
 import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException {
-        DataProcessorService serviceA = new DataProcessorService();
-        serviceA.start();
+
+        DataReceiverClient dataReceiverClient = new DataReceiverClient();
+        dataReceiverClient.sendRequest();
     }
 }

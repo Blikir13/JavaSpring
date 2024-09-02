@@ -18,10 +18,6 @@ import java.util.Scanner;
 public class Console {
     private final Scanner scanner;
     //TODO: "stationData.csv вынести в проперти
-    private static final String filePath = "stationData.csv";
-    private final RepositoryStationCsv repositoryStationCsv = new RepositoryStationCsv(filePath); //FIXME path to var? <3
-    private final Validation validation = new Validation();
-    private final StationDataMapper stationDataMapper = new StationDataMapper();
     private final Config config = new Config();
     private final DataReceiverService dataReceiverService = new DataReceiverService(config);
 
@@ -67,6 +63,23 @@ public class Console {
         return false;
     }
 
+    private StationDataDto inputFromConsole() {
+        StationDataDto stationDataDto = new StationDataDto();
+        int stationNumber = getIntInput("Input station number: ");
+        stationDataDto.setStationNumber(stationNumber);
+        String city = getStringInput("input city: ");
+        stationDataDto.setCity(city);
+        double temperature = getDoubleInput("Input temperature: ");
+        stationDataDto.setTemperature(temperature);
+        double pressure = getDoubleInput("Input pressure: ");
+        stationDataDto.setPressure(pressure);
+        double windSpeed = getDoubleInput("Input wind speed: ");
+        stationDataDto.setWindSpeed(windSpeed);
+        String windDirection = getStringInput("input wind direction: ");
+        stationDataDto.setWindDirection(windDirection);
+        return stationDataDto;
+    }
+
     private String scan() {
         return scanner.nextLine().toUpperCase(Locale.ROOT);
     }
@@ -85,7 +98,7 @@ public class Console {
                         command.printHelp();
                         break;
                     case CREATE:
-                        createRecord(stationDataDto);
+                        createRecord();
                         break;
                     case READ:
                         readRecords();
@@ -94,7 +107,7 @@ public class Console {
                         deleteRecord();
                         break;
                     case UPDATE:
-                        updateRecord(stationDataDto);
+                        updateRecord();
                         break;
                     case EXIT:
                         System.exit(0);
@@ -111,42 +124,17 @@ public class Console {
         }
     }
 
+
     //FIXME public? <3
-    private void createRecord(StationDataDto stationDataDto) throws IOException {
-        int stationNumber = getIntInput("Input station number: ");
-        stationDataDto.setStationNumber(stationNumber);
-        String city = getStringInput("input city: ");
-        stationDataDto.setCity(city);
-        double temperature = getDoubleInput("Input temperature: ");
-        stationDataDto.setTemperature(temperature);
-        double pressure = getDoubleInput("Input pressure: ");
-        stationDataDto.setPressure(pressure);
-        double windSpeed = getDoubleInput("Input wind speed: ");
-        stationDataDto.setWindSpeed(windSpeed);
-        String windDirection = getStringInput("input wind direction: ");
-        stationDataDto.setWindDirection(windDirection);
-
-        try {
-            validation.firstValidation(stationDataDto);
-            StationDataCsvEntity stationDataCsvEntity = stationDataMapper.toStationDataCsvEntity(stationDataDto);
-
-            repositoryStationCsv.write(stationDataCsvEntity);
-
-            // возвращает путь созданного json файла
-            String path = dataReceiverService.createRequest(stationDataDto);
-            // TODO: po idee ne mozhet bit' ""
-            if (!Objects.equals(path, "")) {
-                repositoryStationCsv.update(path);
-            }
-        } catch (IllegalArgumentException e) {
-            System.out.println("Неверные данные: " + e.getMessage());
-        }
+    private void createRecord() throws IOException {
+        StationDataDto stationDataDto = inputFromConsole();
+        dataReceiverService.createRequest(stationDataDto);
 
 
     }
     //FIXME public? <3
     private void readRecords() throws IOException {
-        List<StationDataCsvEntity> readRecords = repositoryStationCsv.read();
+        List<StationDataCsvEntity> readRecords = dataReceiverService.read();
         System.out.println("Доступные записи по станциям:");
         for (StationDataCsvEntity record : readRecords) {
             System.out.println(record);
@@ -155,39 +143,14 @@ public class Console {
     //FIXME public? <3
     private void deleteRecord() throws IOException {
         int id = getIntInput("Input id to delete: ");
-        String path = repositoryStationCsv.deleteRecord(id);
-        System.out.println("path " + path);
-        if (!Objects.equals(path, "")) {
-            dataReceiverService.deleteRecordRequest(path);
-        }
+        dataReceiverService.deleteRecordRequest(id);
     }
     //FIXME public? <3
-    private void updateRecord(StationDataDto stationDataDto) throws IOException {
+    private void updateRecord() throws IOException {
         int id = getIntInput("Input id to update: ");
+        StationDataDto stationDataDto = inputFromConsole();
 
-        int stationNumber = getIntInput("Input station number: ");
-        stationDataDto.setStationNumber(stationNumber);
-        String city = getStringInput("input city: ");
-        stationDataDto.setCity(city);
-        double temperature = getDoubleInput("Input temperature: ");
-        stationDataDto.setTemperature(temperature);
-        double pressure = getDoubleInput("Input pressure: ");
-        stationDataDto.setPressure(pressure);
-        double windSpeed = getDoubleInput("Input wind speed: ");
-        stationDataDto.setWindSpeed(windSpeed);
-        String windDirection = getStringInput("input wind direction: ");
-        stationDataDto.setWindDirection(windDirection);
-        try {
-            validation.firstValidation(stationDataDto);
-        } catch (IllegalArgumentException e) {
-            System.out.println("Неверные данные: " + e.getMessage());
-        }
-
-        String path = repositoryStationCsv.updateRecord(id, stationNumber);
-
-        if (!Objects.equals(path, "")) {
-            dataReceiverService.updateRequest(stationDataDto, path);
-        }
+        dataReceiverService.updateRequest(stationDataDto, id);
 
     }
     //FIXME public? <3

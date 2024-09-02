@@ -4,6 +4,7 @@ import java.io.*;
 import java.net.Socket;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Objects;
 
 import config.Config;
@@ -14,97 +15,80 @@ import mapper.StationDataMapper;
 import repository.entity.*;
 
 import repository.entity.Response.ResponseEntity;
+import repository.impl.RepositoryStationCsv;
+import transport.client.DataProcessorClient;
+import validation.Validation;
 
 
 public class DataReceiverService {
-    private final int processorPort;
-    private final int monitoringPort;
-    private final String host;
     private final static String pattern = "yyyy-MM-dd HH:mm:ss";
     private final static String created = "created";
     private final StationDataMapper stationDataMapper = new StationDataMapper();
+    private static final String filePath = "stationData.csv";
+    private final RepositoryStationCsv repositoryStationCsv = new RepositoryStationCsv(filePath); //FIXME path to var? <3
+    private final Validation validation = new Validation();
+    private final DataProcessorClient dataProcessorClient;
 
 
     public DataReceiverService(Config config) {
-        processorPort = config.getProcessorPort();
-        monitoringPort = config.getMonitoringPort();
-        host = config.getHost();
+        dataProcessorClient = new DataProcessorClient(config);
     }
 
-    public void sendMessageMonitoring(MonitoringEntity monitoringEntity, String status) {
-        try (Socket socket = new Socket(host, monitoringPort);
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream())) { //FIXME not usage?<3
-
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(pattern); //FIXME in var? <3
-            String now = LocalDateTime.now().format(formatter);
-            ; //FIXME duplicate? ?
-            monitoringEntity.setDate(now);
-            monitoringEntity.setStatus(status);
-
-            // Отправляем объект на сервер
-            out.writeObject(monitoringEntity);
-            out.flush();
-
-        } catch (Exception e) {
-            e.printStackTrace(); //FIXME in var?
+    public void updateRequest(StationDataDto stationDataDto, int id) throws IOException {
+        // TODO: пока для отладки так создаю
+        try {
+            validation.firstValidation(stationDataDto);
+        } catch (IllegalArgumentException e) {
+            System.out.println("Неверные данные: " + e.getMessage());
         }
+
+        String path = repositoryStationCsv.updateRecord(id, stationDataDto.getStationNumber());
+
+        if (!Objects.equals(path, "")) {
+            TransferableObject transferableObject = stationDataMapper.toUpdateEntity(stationDataDto, path);
+            dataProcessorClient.sendRequest(transferableObject); //FIXME return value? добавить возвращение реза
+        }
+
     }
-    //FIXME public?
-    private String connection(TransferableObject transferableObject){ //FIXME in var?
-        try (Socket socket = new Socket(host, processorPort); //FIXME variables?
-             ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
-             ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
 
-            // Отправляем объект на сервер
-            out.writeObject(transferableObject);
-            out.flush();
 
-            // Получаем ответ от сервера
-            repository.entity.Response.ResponseEntity response = (ResponseEntity) in.readObject(); //FIXME import?
-            System.out.println("Ответ сервера: " + response.toString());
+    public void createRequest(StationDataDto stationDataDto) { //FIXME exception? <3
+        // TODO: validation -> repository -> transfer
+        try {
+            // TODO: валидация конкретной переменной
+            validation.firstValidation(stationDataDto);
+            StationDataCsvEntity stationDataCsvEntity = stationDataMapper.toStationDataCsvEntity(stationDataDto);
 
-            if (Objects.equals(response.getId(), "")) {
-                // TODO: log error
+            repositoryStationCsv.write(stationDataCsvEntity);
 
-                System.out.println("error" + response.getErrorMessage());
-            } else {
-                //TODO: !!!!
-                return response.getId();
-//                console.updateCsv(response.getId());
+            TransferableObject transferableObject = stationDataMapper.toStationDataEntity(stationDataDto);
+            // возвращает путь созданного json файла
+            String path = dataProcessorClient.sendRequest(transferableObject);
+            // TODO: пока для отладки так создаю
+//            MonitoringEntity monitoringEntity = new MonitoringEntity();
+//            monitoringEntity.setStatus("new"); //FIXME to var?
+//            sendMessageMonitoring(monitoringEntity, created); //FIXME to var?
+
+            if (!Objects.equals(path, "")) {
+                repositoryStationCsv.update(path);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+
+        } catch (IllegalArgumentException | IOException e) {
+            System.out.println("Неверные данные: " + e.getMessage());
         }
-        return "";
     }
 
-    public void updateRequest(StationDataDto stationDataDto, String path) {
-        TransferableObject transferableObject = stationDataMapper.toUpdateEntity(stationDataDto, path); //FIXME inline?
-        // TODO: пока для отладки так создаю
-        MonitoringEntity monitoringEntity = new MonitoringEntity();
-        monitoringEntity.setStatus("new");
-        sendMessageMonitoring(monitoringEntity, created);
-
-        connection(transferableObject); //FIXME return value? добавить возвращение реза
+    public void deleteRecordRequest(int id) throws IOException {
+        DeleteEntity deleteEntity = new DeleteEntity();
+        String path = repositoryStationCsv.deleteRecord(id);
+        System.out.println("path " + path);
+        if (!Objects.equals(path, "")) {
+            deleteEntity.setPath(path);
+            dataProcessorClient.sendRequest(deleteEntity);
+        }
     }
 
-
-    public String createRequest(StationDataDto stationDataDto) { //FIXME exception? <3
-        TransferableObject transferableObject = stationDataMapper.toStationDataEntity(stationDataDto); //FIXME inline? <3
-        // TODO: пока для отладки так создаю
-        MonitoringEntity monitoringEntity = new MonitoringEntity();
-        monitoringEntity.setStatus("new"); //FIXME to var?
-        sendMessageMonitoring(monitoringEntity, created); //FIXME to var?
-
-        return connection(transferableObject);
+    public List<StationDataCsvEntity> read() throws IOException {
+        return repositoryStationCsv.read();
     }
-
-    public void deleteRecordRequest(String path) {
-        DeleteEntity deleteEntity = new DeleteEntity(); //FIXME inline?
-        deleteEntity.setPath(path);
-
-        connection(deleteEntity);
-
-    }
-
 }

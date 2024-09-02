@@ -1,6 +1,5 @@
 package dto.Request;
 
-
 import java.io.Serial;
 
 public class UpdateEntity extends CreateEntity { //FIXME extends Create Entity? <3

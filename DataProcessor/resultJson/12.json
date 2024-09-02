@@ -1,9 +1,0 @@
-{
-  "id": 12,
-  "stationNumber": 1,
-  "city": "Moscow",
-  "temperature": 1.0,
-  "pressure": 1.0,
-  "windSpeed": 1.0,
-  "windDirection": "1"
-}

@@ -14,11 +14,10 @@ import java.net.Socket;
 
 public class DataProcessorService {
     private final int serverPort;
-    private CreateEntity processorEntity = new CreateEntity();
     private final Config config = new Config();
     private final Controller controller = new Controller(config);
 
-    public DataProcessorService(String serverHost, int serverPort) throws IOException {
+    public DataProcessorService() throws IOException {
         this.serverPort = config.getPort();
     }
 

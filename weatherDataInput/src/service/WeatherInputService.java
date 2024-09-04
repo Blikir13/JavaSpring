@@ -1,6 +1,5 @@
 package service;
 
-import java.io.*;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -20,7 +19,6 @@ import validation.Validation;
 
 
 public class WeatherInputService {
-    private final static String pattern = "yyyy-MM-dd HH:mm:ss";
     private final static String created = "created";
     private final WeatherInputMapper stationDataMapper = new WeatherInputMapper();
     private final RepositoryStationCsv repositoryStationCsv; //FIXME path to var? <3
@@ -40,18 +38,18 @@ public class WeatherInputService {
         List<WeatherInputCsvEntity> weatherInputCsvEntities = repositoryStationCsv.read();
         for (WeatherInputCsvEntity weatherInputCsvEntity : weatherInputCsvEntities) {
             if (Objects.equals(weatherInputCsvEntity.getId(), id)) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     public void updateRequest(StationDataDto stationDataDto, int id) {
-        // TODO: check id
         try {
             validation.firstValidation(stationDataDto);
         } catch (IllegalArgumentException e) {
-            System.out.println("Неверные данные: " + e.getMessage());
+            logger.log(Level.SEVERE, e.getMessage(), e);
+//            System.out.println("Неверные данные: " + e.getMessage());
         }
 
         String path = repositoryStationCsv.updateRecord(id, stationDataDto.getStationNumber());
@@ -59,6 +57,12 @@ public class WeatherInputService {
         if (!Objects.equals(path, "")) {
             TransferableObject transferableObject = stationDataMapper.toUpdateEntity(stationDataDto, path);
             dataProcessorClient.sendRequest(transferableObject); //FIXME return value? добавить возвращение реза
+        } else {
+            TransferableObject transferableObject = stationDataMapper.toStationDataEntity(stationDataDto);
+            String newPath = dataProcessorClient.sendRequest(transferableObject);
+            if (!Objects.equals(newPath, "")) {
+                repositoryStationCsv.update(newPath);
+            }
         }
 
     }
@@ -81,8 +85,9 @@ public class WeatherInputService {
                 repositoryStationCsv.update(path);
             }
 
-        } catch (IllegalArgumentException | IOException e) {
-            System.out.println("Неверные данные: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            logger.log(Level.SEVERE, e.getMessage(), e);
+//            System.out.println("Неверные данные: " + e.getMessage());
         }
     }
 

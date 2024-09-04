@@ -1,13 +1,10 @@
 package repository.impl;
 
-//FIXME not imports? <3
-import java.io.IOException;
 import java.util.List;
 import repository.Repository;
 import repository.entity.WeatherInputCsvEntity;
 import util.CsvLoader;
 
-//TODO: совместить с CVL loader <3
 public class RepositoryStationCsv implements Repository {
     private final CsvLoader csvLoader;
 

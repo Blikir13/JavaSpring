@@ -7,6 +7,8 @@ import repository.entity.Response.ResponseDto;
 import java.io.*;
 import java.net.Socket;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class WeatherStorageClient {
     private Socket socket;
@@ -14,6 +16,7 @@ public class WeatherStorageClient {
     private ObjectInputStream objectInputStream;
     private final int processorPort;
     private final String host;
+    private final Logger logger = Logger.getLogger(WeatherStorageClient.class.getName());
 
     public WeatherStorageClient(Config config) {
         this.processorPort = config.getProcessorPort();;
@@ -46,14 +49,15 @@ public class WeatherStorageClient {
 
             if (Objects.equals(response.getId(), "")) {
                 // TODO: log error
-                System.out.println("error" + response.getErrorMessage());
+                logger.warning("error" + response.getErrorMessage());
+//                System.out.println("error" + response.getErrorMessage());
             } else {
                 //TODO: !!!!
                 return response.getId();
             }
             disconnect();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
         return "";
     }

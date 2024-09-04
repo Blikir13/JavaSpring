@@ -64,7 +64,7 @@ public class ConsoleManager {
     public void scanCommand() {
         flag = true;
         while (flag) {
-            System.out.println("Введите команду: ");
+            System.out.println(ConsolePrompt.INPUT_COMMAND.getPrompt());
             String scannedCommand = this.scan();
             if (!isKnownCommand(scannedCommand)) {
                 logger.log(Level.INFO, ConsolePrompt.UNKNOWN_COMMAND.getPrompt());
@@ -89,8 +89,8 @@ public class ConsoleManager {
 
     private void deleteRecord() {
         int id = console.getNumberInput(ConsolePrompt.ENTER_ID_DELETE.getPrompt(), Integer.class);
-        if (!dataReceiverService.checkHasId(id)) {
-            logger.log(Level.INFO, "Нет записи с id: " + id);
+        if (dataReceiverService.checkHasId(id)) {
+            logger.log(Level.INFO, ConsolePrompt.UNKNOWN_ID.getPrompt() + id);
             return;
         }
         dataReceiverService.deleteRecordRequest(id);
@@ -98,8 +98,8 @@ public class ConsoleManager {
 
     private void updateRecord() {
         int id = console.getNumberInput(ConsolePrompt.ENTER_ID_UPDATE.getPrompt(), Integer.class);
-        if (!dataReceiverService.checkHasId(id)) {
-            logger.log(Level.INFO, "Нет записи с id: " + id);
+        if (dataReceiverService.checkHasId(id)) {
+            logger.log(Level.INFO, ConsolePrompt.UNKNOWN_ID.getPrompt() + id);
             return;
         }
         StationDataDto stationDataDto = console.inputFromConsole();

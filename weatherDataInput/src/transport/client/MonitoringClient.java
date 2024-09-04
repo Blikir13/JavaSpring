@@ -5,12 +5,15 @@ import repository.entity.MonitoringDto;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class MonitoringClient {
     private Socket socket;
     private ObjectOutputStream objectOutputStream;
     private final int monitoringPort;
     private final String host;
+    private final Logger logger = Logger.getLogger(MonitoringClient.class.getName());
 
     public MonitoringClient(Config config) {
         this.monitoringPort = config.getMonitoringPort();;
@@ -27,7 +30,7 @@ public class MonitoringClient {
         socket.close();
     }
 
-    public void sendRequest(MonitoringDto monitoringEntity) throws IOException { //FIXME in var?
+    public void sendRequest(MonitoringDto monitoringEntity) {
         try {
             connect();
 
@@ -36,7 +39,7 @@ public class MonitoringClient {
 
             disconnect();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 }

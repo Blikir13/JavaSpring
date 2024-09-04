@@ -8,11 +8,14 @@ public enum ConsolePrompt {
     WIND_SPEED("Введите скорость ветра: "),
     WIND_DIRECTION("Введите направление ветра: "),
 
+    INPUT_COMMAND("Введите команду: "),
+
     ENTER_ID_DELETE("Введите id для удаления: "),
     ENTER_ID_UPDATE("Введите id для обновления: "),
 
     ENTER_NUMBER("Пожалуйста, введите число!"),
     UNKNOWN_COMMAND("Вы ввели неизвестную команду. Введите help, чтобы узнать о командах"),
+    UNKNOWN_ID("Нет записи с id: "),
 
     STATION_INFO("Доступные записи по станциям:"),;
 

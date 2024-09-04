@@ -65,13 +65,16 @@ public class WeatherStorageClient {
                 ResponseDto responseEntity = new ResponseDto();
 
                 TransferableObject readObject = (TransferableObject) objectInputStream.readObject();
-                if (readObject instanceof UpdateEntity stationDataEntity) {
+                if (readObject instanceof UpdateEntity) {
+                    UpdateEntity stationDataEntity = (UpdateEntity) readObject;
                     responseEntity = dataProcessorService.update(stationDataEntity);
                     logger.log(Level.INFO, "Принят объект: " + stationDataEntity);
-                } else if (readObject instanceof CreateEntity createEntity) {
+                } else if (readObject instanceof CreateEntity) {
+                    CreateEntity createEntity = (CreateEntity) readObject;
                     responseEntity = dataProcessorService.process(createEntity);
                     logger.log(Level.INFO, "Принят объект: " + createEntity);
-                } else if (readObject instanceof DeleteEntity deleteEntity) {
+                } else if (readObject instanceof DeleteEntity) {
+                    DeleteEntity deleteEntity = (DeleteEntity) readObject;
                     responseEntity = dataProcessorService.delete(deleteEntity.getPath());
                     logger.log(Level.INFO, "Принят объект: " + deleteEntity);
                 }

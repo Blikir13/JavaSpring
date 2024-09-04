@@ -1,9 +1,6 @@
 package dto.Request;
 
-import java.io.Serial;
-
 public class CreateEntity extends TransferableObject {
-    @Serial
     private static final long serialVersionUID = 1L;
     private int stationNumber;
     private String city;

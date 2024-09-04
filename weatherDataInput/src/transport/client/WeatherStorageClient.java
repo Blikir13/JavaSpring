@@ -32,7 +32,7 @@ public class WeatherStorageClient {
         socket.close();
     }
 
-    public String sendRequest(TransferableObject transferableObject) throws IOException { //FIXME in var?
+    public String sendRequest(TransferableObject transferableObject) { //FIXME in var?
         try {
             connect();
 

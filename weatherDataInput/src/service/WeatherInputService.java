@@ -3,6 +3,8 @@ package service;
 import java.io.*;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import config.Config;
 import dto.Request.DeleteEntity;
@@ -25,6 +27,7 @@ public class WeatherInputService {
     private final Validation validation = new Validation();
     private final WeatherStorageClient dataProcessorClient;
     private final MonitoringClient monitoringClient;
+    private final Logger logger = Logger.getLogger(this.getClass().getName());
 
 
     public WeatherInputService(Config config) {
@@ -33,8 +36,18 @@ public class WeatherInputService {
         repositoryStationCsv = new RepositoryStationCsv(config.getPath());
     }
 
-    public void updateRequest(StationDataDto stationDataDto, int id) throws IOException {
-        // TODO: пока для отладки так создаю
+    public boolean checkHasId(int id) {
+        List<WeatherInputCsvEntity> weatherInputCsvEntities = repositoryStationCsv.read();
+        for (WeatherInputCsvEntity weatherInputCsvEntity : weatherInputCsvEntities) {
+            if (Objects.equals(weatherInputCsvEntity.getId(), id)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void updateRequest(StationDataDto stationDataDto, int id) {
+        // TODO: check id
         try {
             validation.firstValidation(stationDataDto);
         } catch (IllegalArgumentException e) {
@@ -73,7 +86,7 @@ public class WeatherInputService {
         }
     }
 
-    public void deleteRecordRequest(int id) throws IOException {
+    public void deleteRecordRequest(int id) {
         DeleteEntity deleteEntity = new DeleteEntity();
         String path = repositoryStationCsv.deleteRecord(id);
         System.out.println("path " + path);
@@ -83,7 +96,7 @@ public class WeatherInputService {
         }
     }
 
-    public List<WeatherInputCsvEntity> read() throws IOException {
+    public List<WeatherInputCsvEntity> read() {
         return repositoryStationCsv.read();
     }
 }

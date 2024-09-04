@@ -1,9 +1,7 @@
 package dto.Request;
 
-import java.io.Serial;
 
 public class UpdateEntity extends CreateEntity { //FIXME extends Create Entity? <3
-    @Serial
     private static final long serialVersionUID = 1L;
     private String path;
 

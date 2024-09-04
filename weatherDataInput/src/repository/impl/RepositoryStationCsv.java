@@ -16,7 +16,7 @@ public class RepositoryStationCsv implements Repository {
     }
 
     @Override
-    public void write(WeatherInputCsvEntity stationDataCsvEntity) throws IOException {
+    public void write(WeatherInputCsvEntity stationDataCsvEntity) {
         List<WeatherInputCsvEntity> csvEntities = csvLoader.loadStationData();
         if (csvEntities.isEmpty()) {
             stationDataCsvEntity.setId(1);
@@ -27,18 +27,18 @@ public class RepositoryStationCsv implements Repository {
         csvLoader.write(stationDataCsvEntity);
     }
 
-    public void update(String path) throws IOException {
+    public void update(String path) {
         List<WeatherInputCsvEntity> csvEntities = csvLoader.loadStationData();
         WeatherInputCsvEntity last = csvEntities.get(csvEntities.size() - 1);
         last.setFileName(path);
         csvLoader.reWrite(csvEntities);
     }
 
-    public List<WeatherInputCsvEntity> read() throws IOException {
+    public List<WeatherInputCsvEntity> read() {
         return csvLoader.loadStationData();
     }
 
-    public String deleteRecord(int id) throws IOException {
+    public String deleteRecord(int id) {
         List<WeatherInputCsvEntity> csvEntities = csvLoader.loadStationData();
         String path = "";
         for (int i = csvEntities.size() - 1; i >= 0; i--) {
@@ -52,14 +52,14 @@ public class RepositoryStationCsv implements Repository {
         return path;
     }
 
-    public String updateRecord(int id, int stationNumber) throws IOException {
+    public String updateRecord(int id, int stationNumber) {
         List<WeatherInputCsvEntity> csvEntities = csvLoader.loadStationData();
         String path = "";
         for (int i = csvEntities.size() - 1; i >= 0; i--) {
             WeatherInputCsvEntity stationDataCsvEntity = csvEntities.get(i);
             if (stationDataCsvEntity.getId() == id) {
                 path = stationDataCsvEntity.getFileName() != null ? stationDataCsvEntity.getFileName() : path;
-                // TODO: возмонжо стоит обновлять номер станции после 2 валидации? К
+                // TODO: возмонжо стоит обновлять номер станции после 2 валидации?
                 stationDataCsvEntity.setStationNumber(stationNumber);
             }
         }

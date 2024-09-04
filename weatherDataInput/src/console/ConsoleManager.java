@@ -7,7 +7,6 @@ import service.WeatherInputService;
 
 import java.util.Locale;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -18,6 +17,7 @@ public class ConsoleManager {
     private final WeatherInputService dataReceiverService = new WeatherInputService(config);
     private final Console console = new Console();
     private final Logger logger = Logger.getLogger(ConsoleManager.class.getName());
+    private boolean flag;
 
     public ConsoleManager() {
     }
@@ -36,48 +36,50 @@ public class ConsoleManager {
         return new Scanner(System.in).nextLine().toUpperCase(Locale.ROOT);
     }
 
+    private void defineCommand(String scannedCommand) {
+        Commands command = Commands.valueOf(scannedCommand);
+        switch (command) {
+            case HELP:
+                command.printHelp();
+                break;
+            case CREATE:
+                createRecord();
+                break;
+            case READ:
+                readRecords();
+                break;
+            case DELETE:
+                deleteRecord();
+                break;
+            case UPDATE:
+                updateRecord();
+                break;
+            case EXIT:
+                flag = false;
+            default:
+                break;
+        }
+    }
+
     public void scanCommand() {
-        boolean flag = true;
+        flag = true;
         while (flag) {
-            try {
-                String scannedCommand = this.scan();
-                Commands command = Commands.valueOf(scannedCommand);
-                if (!isKnownCommand(scannedCommand)) {
-                    logger.log(Level.INFO, ConsolePrompt.UNKNOWN_COMMAND.getPrompt());
-                }
-                switch (command) {
-                    case HELP:
-                        command.printHelp();
-                        break;
-                    case CREATE:
-                        createRecord();
-                        break;
-                    case READ:
-                        readRecords();
-                        break;
-                    case DELETE:
-                        deleteRecord();
-                        break;
-                    case UPDATE:
-                        updateRecord();
-                        break;
-                    case EXIT:
-                        flag = false;
-                    default:
-                        break;
-                }
-            } catch (Exception e) {
-                logger.log(Level.SEVERE, e.getMessage(), e);
+            System.out.println("Введите команду: ");
+            String scannedCommand = this.scan();
+            if (!isKnownCommand(scannedCommand)) {
+                logger.log(Level.INFO, ConsolePrompt.UNKNOWN_COMMAND.getPrompt());
+            } else {
+                defineCommand(scannedCommand);
             }
         }
     }
 
-    private void createRecord() throws IOException {
+    private void createRecord() {
         StationDataDto stationDataDto = console.inputFromConsole();
         dataReceiverService.createRequest(stationDataDto);
     }
 
-    private void readRecords() throws IOException {
+    private void readRecords() {
         List<WeatherInputCsvEntity> readRecords = dataReceiverService.read();
         System.out.println(ConsolePrompt.STATION_INFO.getPrompt());
         for (WeatherInputCsvEntity record : readRecords) {
@@ -85,13 +87,21 @@ public class ConsoleManager {
         }
     }
 
-    private void deleteRecord() throws IOException {
+    private void deleteRecord() {
         int id = console.getNumberInput(ConsolePrompt.ENTER_ID_DELETE.getPrompt(), Integer.class);
+        if (!dataReceiverService.checkHasId(id)) {
+            logger.log(Level.INFO, "Нет записи с id: " + id);
+            return;
+        }
         dataReceiverService.deleteRecordRequest(id);
     }
 
-    private void updateRecord() throws IOException {
+    private void updateRecord() {
         int id = console.getNumberInput(ConsolePrompt.ENTER_ID_UPDATE.getPrompt(), Integer.class);
+        if (!dataReceiverService.checkHasId(id)) {
+            logger.log(Level.INFO, "Нет записи с id: " + id);
+            return;
+        }
         StationDataDto stationDataDto = console.inputFromConsole();
 
         dataReceiverService.updateRequest(stationDataDto, id);

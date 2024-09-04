@@ -16,9 +16,13 @@ public class CsvLoader {
         this.filePath = filePath;
     }
 
-    private void createFileIfNotExists(File file) throws IOException {
+    private void createFileIfNotExists(File file) {
         if (!file.exists()) {
-            file.createNewFile();
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
                 writer.write(csvHeader); //FIXME var? <3
                 writer.newLine();
@@ -28,8 +32,12 @@ public class CsvLoader {
         }
     }
 
-    private void createFile(File file) throws IOException {
-        file.createNewFile();
+    private void createFile(File file) {
+        try {
+            file.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath))) {
             writer.write(csvHeader); //FIXME var? <3
             writer.newLine();
@@ -47,7 +55,7 @@ public class CsvLoader {
         }
     }
 
-    public void reWrite(List<WeatherInputCsvEntity> csvEntities) throws IOException {
+    public void reWrite(List<WeatherInputCsvEntity> csvEntities) {
         File file = new File(filePath);
         createFile(file);
         for (WeatherInputCsvEntity csvEntity : csvEntities) {
@@ -55,14 +63,14 @@ public class CsvLoader {
         }
     }
 
-    public void write(WeatherInputCsvEntity stationDataCsvEntity) throws IOException {
+    public void write(WeatherInputCsvEntity stationDataCsvEntity) {
         File file = new File(filePath);
         createFileIfNotExists(file);
         writeDataToFile(stationDataCsvEntity);
     }
 
     private List<WeatherInputCsvEntity> getLinesFromFile(BufferedReader bufferedReader) throws IOException {
-        String header =  bufferedReader.readLine(); //FIXME definition of read header?
+        String header = bufferedReader.readLine(); //FIXME definition of read header?
         String line;
         List<WeatherInputCsvEntity> csvEntities = new ArrayList<>();
 
@@ -95,7 +103,6 @@ public class CsvLoader {
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {//FIXME to method? <3
             csvEntities = getLinesFromFile(br);
-
         } catch (IOException e) {
             e.printStackTrace();
         }

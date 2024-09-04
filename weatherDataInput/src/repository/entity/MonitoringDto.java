@@ -1,13 +1,10 @@
 package repository.entity;
 
-
-import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class MonitoringDto implements Serializable {
-    @Serial
     private static final long serialVersionUID = 1L;
     private String object;
     private String status;

@@ -2,6 +2,7 @@ package util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import repository.entity.StationDataJsonEntity;
 
 import java.io.File;
@@ -30,9 +31,9 @@ public class JsonReader {
         try (FileReader readerTemp = new FileReader(filenameTemp);
              FileReader readerCity = new FileReader(filenameCity)) {
             Gson gsonTemp = new Gson();
-            data = gsonTemp.fromJson(readerTemp, Map.class);
+            data = gsonTemp.fromJson(readerTemp, new TypeToken<Map<String, Map<String, Double>>>() {}.getType());
             Gson gsonCity = new Gson();
-            data1 = gsonCity.fromJson(readerCity, Map.class);
+            data1 = gsonCity.fromJson(readerCity, new TypeToken<Map<String, String>>() {}.getType());
         } catch (IOException e) {
             logger.log(Level.SEVERE, e.getMessage(), e);
         }

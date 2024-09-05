@@ -20,6 +20,8 @@ import validation.Validation;
 
 public class WeatherInputService {
     private final static String created = "created";
+    private final static String mistake = "mistake";
+    private final static String success = "success";
     private final WeatherInputMapper stationDataMapper = new WeatherInputMapper();
     private final RepositoryStationCsv repositoryStationCsv; //FIXME path to var? <3
     private final Validation validation = new Validation();
@@ -82,10 +84,13 @@ public class WeatherInputService {
             TransferableObject transferableObject = stationDataMapper.toStationDataEntity(stationDataDto);
             String path = dataProcessorClient.sendRequest(transferableObject);
 
-            logger.log(Level.INFO, "Deleted record with path: " + path);
+            logger.log(Level.INFO, "Created record with path: " + path);
 
             if (!Objects.equals(path, "")) {
+                monitoringClient.sendRequest(new MonitoringDto(stationDataCsvEntity.toString(), mistake));
                 repositoryStationCsv.update(path);
+            } else {
+                monitoringClient.sendRequest(new MonitoringDto(stationDataCsvEntity.toString(), success));
             }
 
         } catch (IllegalArgumentException e) {

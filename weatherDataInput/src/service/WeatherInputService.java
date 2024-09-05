@@ -64,6 +64,7 @@ public class WeatherInputService {
                 repositoryStationCsv.update(newPath);
             }
         }
+        logger.log(Level.INFO, "Updated station data with id: " + id);
 
     }
 
@@ -81,6 +82,8 @@ public class WeatherInputService {
             TransferableObject transferableObject = stationDataMapper.toStationDataEntity(stationDataDto);
             String path = dataProcessorClient.sendRequest(transferableObject);
 
+            logger.log(Level.INFO, "Deleted record with path: " + path);
+
             if (!Objects.equals(path, "")) {
                 repositoryStationCsv.update(path);
             }
@@ -94,11 +97,11 @@ public class WeatherInputService {
     public void deleteRecordRequest(int id) {
         DeleteEntity deleteEntity = new DeleteEntity();
         String path = repositoryStationCsv.deleteRecord(id);
-        System.out.println("path " + path);
         if (!Objects.equals(path, "")) {
             deleteEntity.setPath(path);
             dataProcessorClient.sendRequest(deleteEntity);
         }
+        logger.log(Level.INFO, "Deleted record with id: " + id);
     }
 
     public List<WeatherInputCsvEntity> read() {

@@ -45,7 +45,7 @@ public class WeatherStorageClient {
 
             // Получаем ответ от сервера
             ResponseDto response = (ResponseDto) objectInputStream.readObject(); //FIXME import?
-            logger.log(Level.INFO, "Ответ сервера: " + response.toString());
+//            logger.log(Level.INFO, "Ответ сервера: " + response.toString());
 
             if (Objects.equals(response.getId(), "")) {
                 // TODO: log error

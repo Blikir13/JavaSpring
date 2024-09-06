@@ -24,6 +24,17 @@ public class RepositoryStationCsv implements Repository {
         csvLoader.write(stationDataCsvEntity);
     }
 
+    public void updateWithId(String path, int id) {
+        List<WeatherInputCsvEntity> csvEntities = csvLoader.loadStationData();
+        for (int i = csvEntities.size() - 1; i >= 0; i--) {
+            WeatherInputCsvEntity stationDataCsvEntity = csvEntities.get(i);
+            if (stationDataCsvEntity.getId() == id) {
+                stationDataCsvEntity.setFileName(path);
+            }
+        }
+        csvLoader.reWrite(csvEntities);
+    }
+
     public void update(String path) {
         List<WeatherInputCsvEntity> csvEntities = csvLoader.loadStationData();
         WeatherInputCsvEntity last = csvEntities.get(csvEntities.size() - 1);

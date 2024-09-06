@@ -56,16 +56,12 @@ public class WeatherInputService {
 
         String path = repositoryStationCsv.updateRecord(id, stationDataDto.getStationNumber());
 
-        if (!Objects.equals(path, "")) {
-            TransferableObject transferableObject = stationDataMapper.toUpdateEntity(stationDataDto, path);
-            dataProcessorClient.sendRequest(transferableObject); //FIXME return value? добавить возвращение реза
-        } else {
-            TransferableObject transferableObject = stationDataMapper.toStationDataEntity(stationDataDto);
-            String newPath = dataProcessorClient.sendRequest(transferableObject);
-            if (!Objects.equals(newPath, "")) {
-                repositoryStationCsv.update(newPath);
-            }
+        TransferableObject transferableObject = stationDataMapper.toUpdateEntity(stationDataDto, path);
+        String newPath = dataProcessorClient.sendRequest(transferableObject); //FIXME return value? добавить возвращение реза
+        if (!Objects.equals(newPath, "")) {
+            repositoryStationCsv.updateWithId(newPath, id);
         }
+
         logger.log(Level.INFO, "Updated station data with id: " + id);
 
     }
